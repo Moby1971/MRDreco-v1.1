@@ -14,11 +14,11 @@ function dicom_header = generate_dicomheader_MRD(parameters,fname,filecounter,i,
 %
 %
 
-aspectratio = parameters.SMY/parameters.SMX;  % apect ratio, needs to be checked
+
 acq_dur = parameters.nr_frames * parameters.timeperframe;   % acquisition time in seconds
 
 pixelx = parameters.FOV/dimx;
-pixely = aspectratio*parameters.FOV/dimy;
+pixely = parameters.aratio*parameters.FOV/dimy;
 pixelz = parameters.NO_SLICES*parameters.SLICE_THICKNESS/dimz;
 
 dt = datetime(parameters.date,'InputFormat','dd-MMM-yyyy HH:mm:ss');
@@ -130,7 +130,7 @@ dcmhead.SpatialResolution = [];
 dcmhead.TriggerTime = 0;    
 dcmhead.DistanceSourceToDetector = [];
 dcmhead.DistanceSourceToPatient = [];
-dcmhead.FieldofViewDimensions = [parameters.FOV aspectratio*parameters.FOV parameters.SLICE_THICKNESS];
+dcmhead.FieldofViewDimensions = [parameters.FOV parameters.aratio*parameters.FOV parameters.SLICE_THICKNESS];
 dcmhead.ExposureTime = [];
 dcmhead.XrayTubeCurrent = [];
 dcmhead.Exposure = [];
@@ -162,7 +162,7 @@ dcmhead.StudyID = '01';
 dcmhead.SeriesNumber = parameters.filename;
 dcmhead.AcquisitionNumber = 1;
 dcmhead.InstanceNumber = filecounter;          
-dcmhead.ImagePositionPatient = [-parameters.FOV/2 -(aspectratio*parameters.FOV/2) (z-round(parameters.NO_SLICES/2))*(parameters.SLICE_SEPARATION/parameters.SLICE_INTERLEAVE)]';
+dcmhead.ImagePositionPatient = [-parameters.FOV/2 -(parameters.aratio*parameters.FOV/2) (z-round(parameters.NO_SLICES/2))*(parameters.SLICE_SEPARATION/parameters.SLICE_INTERLEAVE)]';
 dcmhead.ImageOrientationPatient = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0]';
 dcmhead.FrameOfReferenceUID = '';
 dcmhead.TemporalPositionIdentifier = i;
@@ -178,7 +178,7 @@ dcmhead.PlanarConfiguration = 0;
 dcmhead.Rows = dimx;
 dcmhead.Columns = dimy;
 dcmhead.PixelSpacing = [pixelx pixely]';
-dcmhead.PixelAspectRatio = 1;
+dcmhead.PixelAspectRatio = parameters.aratio;
 dcmhead.BitsAllocated = 16;
 dcmhead.BitsStored = 15;
 dcmhead.HighBit = 14;
@@ -189,7 +189,7 @@ dcmhead.RescaleSlope = 1;
 dcmhead.HeartRate = 0;
 dcmhead.NumberOfSlices = parameters.NO_SLICES;
 dcmhead.CardiacNumberOfImages = 1;
-dcmhead.MRAcquisitionType = '2D';
+dcmhead.MRAcquisitionType = parameters.dimensionality;
 dcmhead.ScanOptions = 'CG';
 dcmhead.BodyPartExamined = '';
 
