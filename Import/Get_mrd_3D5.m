@@ -10,7 +10,7 @@
 % 30 April 2014 - support for reading orientations added
 % 11 September 2014 - swapped views and views2 in the array (otherwise the images are rotated)
 % 13 October 2015 - scaling added as a parameter
-function [im,dim,par] = Get_mrd_3D3(filename,reordering1, reordering2)
+function [im,dim,par,unsortedkspace] = Get_mrd_3D5(filename,reordering1, reordering2)
 fid = fopen(filename,'r');      % Define the file id
 val = fread(fid,4,'int32');
 xdim = val(1); 
