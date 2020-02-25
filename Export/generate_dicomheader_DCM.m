@@ -13,7 +13,6 @@ function dicom_header = generate_dicomheader_DCM(app,dcmhead,parameters,fn,filec
 % 
 %
 
-
 frametime = parameters.acqdur/nr_frames;    % time between frames in ms
 
 pixely = app.FOVViewField2.Value/dimy;
@@ -37,8 +36,8 @@ time = [hour,minute,seconds];
 dcmhead.Filename = fname;
 dcmhead.FileModDate = parameters.date;
 dcmhead.FileSize = dimy*dimx*2;
-dcmhead.Width = dimx;
-dcmhead.Height = dimy;
+dcmhead.Width = dimy;
+dcmhead.Height = dimx;
 dcmhead.BitDepth = 15;
 dcmhead.InstitutionName = 'Amsterdam UMC';
 dcmhead.ReferringPhysicianName.FamilyName = 'AMC preclinical MRI';
@@ -56,7 +55,7 @@ dcmhead.InversionTime = 0;
 dcmhead.ImagedNucleus = '1H';
 dcmhead.MagneticFieldStrength = 7;
 dcmhead.TriggerTime = (frame-1)*frametime;    % frame time 
-dcmhead.AcquisitionMatrix = uint16([dimy 0 0 dimx])';
+dcmhead.AcquisitionMatrix = uint16([dimx 0 0 dimy])';
 dcmhead.AcquisitionDeviceProcessingDescription = '';
 dcmhead.AcquisitionDuration = parameters.acqdur;
 dcmhead.InstanceNumber = filecounter;          % instance number
@@ -67,7 +66,7 @@ dcmhead.TemporalPositionIndex = uint32([]);
 dcmhead.Rows = dimy;
 dcmhead.Columns = dimx;
 dcmhead.PixelSpacing = [pixely pixelx]';
-dcmhead.PixelAspectRatio = [1 1]';
+dcmhead.PixelAspectRatio = [1 pixely/pixelx]';
 dcmhead.BitsAllocated = 16;
 dcmhead.BitsStored = 15;
 dcmhead.HighBit = 14;

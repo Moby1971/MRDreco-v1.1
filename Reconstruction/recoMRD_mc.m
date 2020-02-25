@@ -25,17 +25,8 @@ if ncoils>1
     sensitivities = bart('ecalib -I -a', kspace_pics_sum);
     
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
-    picscommand = ['pics -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVt)];
+    picscommand = ['pics -S -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVt)];
     images = bart(picscommand,kspace_pics,sensitivities);
-    
-    % clear correction
-%     clear_map = sqrt(sum(abs(sensitivities).^2,[4,5]));         % sum of squares sensitivity maps
-%     data_dims = size(images);                                   % size of the bart reconstructed images
-%     clear_map = repmat(clear_map,[1 1 1 data_dims(4:end)]);     % adjust size of sensitivity maps to size of images
-%     clear_map(clear_map<0.2) = 0;                               % threshold to avoid division by very low values
-%     images = images./clear_map;                                 % clear corrected image
-%     images(isnan(images)) = 0;                                  % correct for division by zero
-%     images(isinf(images)) = 0;                                  % correct for division by zero
     
 else
     
@@ -44,12 +35,12 @@ else
     
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
     % regular reconstruction
-    picscommand = ['pics -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVt)];
+    picscommand = ['pics -S -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVt)];
     images = bart(picscommand,kspace_pics,sensitivities);
     
 end
 
 % rearrange to orientation: x, y, z, frames
-images = flip(flip(permute(abs(images),[3, 2, 1, 11, 4, 5, 6, 7, 8, 9, 10]),2),3);
+images = flip(flip(permute(abs(images),[3, 2, 1, 11, 4, 5, 6, 7, 8, 9, 10]),1),2);
 
 end
