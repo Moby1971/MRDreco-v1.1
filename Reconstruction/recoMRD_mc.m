@@ -18,15 +18,20 @@ for i = 1:ncoils
 end
 kspace_pics = permute(kspace,[3,2,1,5,6,7,8,9,10,11,4]);
 
+
+
 if ncoils>1
     
     % espirit sensitivity maps
     kspace_pics_sum = sum(kspace_pics,11);
-    sensitivities = bart('ecalib -I -a', kspace_pics_sum);
+    sensitivities = bart('ecalib -I -S -a', kspace_pics_sum);
     
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
     picscommand = ['pics -S -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVt)];
     images = bart(picscommand,kspace_pics,sensitivities);
+    
+    % Sum of squares reconstruction
+    images = abs(bart('rss 16', images));
     
 else
     
@@ -39,6 +44,8 @@ else
     images = bart(picscommand,kspace_pics,sensitivities);
     
 end
+
+
 
 % rearrange to orientation: x, y, z, frames
 images = flip(flip(permute(abs(images),[3, 2, 1, 11, 4, 5, 6, 7, 8, 9, 10]),1),2);
