@@ -11,16 +11,10 @@ nr = parameters.EXPERIMENT_ARRAY;
 kspace = zeros(dimx, dimy, dimz, frames);
 nsaspace = zeros(dimx, dimy, dimz, frames);
 
-arraylength = parameters.NO_VIEWS_ORIG*parameters.NO_VIEWS_2_ORIG;
-
 % fill the ky and kz k-space locations
-cnt = 1;
-for i = 1:arraylength
-   
-    ky(i) = int8(parameters.gp_var_proud(cnt)) + round(dimy/2) + 1;     % contains the y-coordinates of the custom k-space sequentially
-    kz(i) = int8(parameters.gp_var_proud(cnt+1)) + round(dimz/2) + 1;   % contains the z-coordinates of the custom k-space sequentially
-    cnt = cnt + 2; 
-    
+for i = 1:length(parameters.proudarray)
+    ky(i) = int8(parameters.proudarray(1,i)) + round(dimy/2) + 1;     % contains the y-coordinates of the custom k-space sequentially
+    kz(i) = int8(parameters.proudarray(2,i)) + round(dimz/2) + 1;   % contains the z-coordinates of the custom k-space sequentially
 end
 
 % duplicate for multiple acquired repetitions
@@ -49,7 +43,7 @@ for t = 1:frames
         
         for x = 1:dimx 
             % loop over x-dimension (readout)
-            
+                        
             kspace(x,ky(w),kz(w),t) = kspace(x,ky(w),kz(w),t) + uskspace((w-1)*dimx + x);
             nsaspace(x,ky(w),kz(w),t) = nsaspace(x,ky(w),kz(w),t) + 1;
             
