@@ -62,7 +62,6 @@ for t = 1:frames
     
 end
 
-
        
 % normalize by dividing through number of averages
 kspace = kspace./nsaspace;
@@ -73,10 +72,5 @@ kspace(isnan(kspace)) = complex(0);
 fillingspace = nsaspace./nsaspace;
 fillingspace(isnan(fillingspace)) = 0;
 
-
-% flip to correct orientation
-kspace = flip(flip(kspace,2),3);
-nsaspace = flip(flip(nsaspace,2),3);
-fillingspace = flip(flip(fillingspace,2),3);
 
 end

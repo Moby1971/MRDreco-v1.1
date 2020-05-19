@@ -69,8 +69,7 @@ end
 
 % rearrange to correct orientation: x, y, z, dynamics
 image_reg = reshape(image_reg,[dimz,dimy,dimx,dimd]);
-images = flip(permute(image_reg,[3,2,1,4]),2);
-
+images = permute(image_reg,[3,2,1,4]);
 
 
 end
