@@ -120,11 +120,11 @@ for slice = 1:nr_slices
 end
 
 % orientations are flipped
-image_out = flip(flip(image_out,1),2);
+image_out = flip(image_out,1);
 
 % there seems to be a 1 pixel shift with this reco, correct for this:
 image_out = circshift(image_out,1,1);
-image_out = circshift(image_out,1,2);
+image_out = circshift(image_out,-1,2);
 
 % update gauge
 app.RecoProgressGauge.Value = 100;

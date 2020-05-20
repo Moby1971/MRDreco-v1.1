@@ -66,7 +66,7 @@ for dynamic = 1:nr_dynamics
     
 end
 
-image_out = round(4095*image_out/max(image_out(:)));
+image_out = flip(flip(image_out,2),3);
 
 % update gauge
 app.RecoProgressGauge.Value = 100;

@@ -65,7 +65,8 @@ for slice = 1:nr_slices
     
 end
 
-image_out = round(4095*image_out/max(image_out(:)));
+image_out = flip(image_out,2);
+
 
 % update gauge
 app.RecoProgressGauge.Value = 100;
