@@ -47,18 +47,16 @@ for t = 1:frames
     if wend > arraylength*nr 
         wend = arraylength*nr; 
     end
-       
+    
     for w = wstart:wend
-        % loop over y-dimension (views)
         
-        for x = 1:dimx
-            % loop over x-dimension (readout)
-            
-            kspace(x,ky(w),z,t) = kspace(x,ky(w),z,t) + uskspace((w - 1)*dimx + x);
-            nsaspace(x,ky(w),z,t) = nsaspace(x,ky(w),z,t) + 1;
-        end
+        x = 1:dimx;
+        
+        kspace(x,ky(w),z,t) = kspace(x,ky(w),z,t) + uskspace((w - 1)*dimx + x);
+        nsaspace(x,ky(w),z,t) = nsaspace(x,ky(w),z,t) + 1;
         
     end
+    
     
 end
 

@@ -1,4 +1,4 @@
-function image_out = cs_reco2D_mat_mc(app,kspace_in,ncoils,lambda_W,lambda_TV,ndimx,ndimy)
+function image_out = cs_reco2D_mat_mc(app,kspace_in,averages,ncoils,lambda_W,lambda_TV,ndimx,ndimy)
 
 
 % kspace_in = {coil}[X Y slices NR]
@@ -12,6 +12,7 @@ nr_dynamics = size(kspace_in{1},4);
 for i = 1:ncoils
     kspace_in{i} = permute(kspace_in{i},[1,2,4,3]);
 end
+averages = permute(averages,[1,2,4,3]);
 
 % kspace data x,y,NR,slices,coils
 for i = 1:ncoils
@@ -69,13 +70,13 @@ for slice = 1:nr_slices
     maski = logical(maski);
     
     % size of the data
-    [ny,nx,~,ncoils]=size(kdatai);
+    [nx,ny,~,ncoils]=size(kdatai);
     
     % normalize the data in the range of approx 0 - 1 for better numerical stability
     kdatai = kdatai/max(abs(kdatai(:)));
         
     % coil sensitivity map
-    b1 = ones(ny,nx,ncoils);
+    b1 = ones(nx,ny,ncoils);
     
     % data
     param.y = kdatai;
@@ -118,8 +119,12 @@ for slice = 1:nr_slices
     
 end
 
-image_out = round(4096*image_out/max(image_out(:)));
+% orientations are flipped
 image_out = flip(flip(image_out,1),2);
+
+% there seems to be a 1 pixel shift with this reco, correct for this:
+image_out = circshift(image_out,1,1);
+image_out = circshift(image_out,1,2);
 
 % update gauge
 app.RecoProgressGauge.Value = 100;

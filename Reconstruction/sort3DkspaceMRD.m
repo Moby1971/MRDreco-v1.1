@@ -27,6 +27,8 @@ end
 totalnr = length(ukspace);
 arraylength = parameters.NO_VIEWS_ORIG*dimz;
 
+
+
 cnt1 = 1;
 cnt2 = 1;
 for i = 1:totalnr
@@ -37,6 +39,8 @@ for i = 1:totalnr
     cnt2 = cnt2 + 1;
     cnt2(cnt2 > dimz) = 1;
 end
+
+
 
 % number of k-space points per frame
 kpointsperframe = round(parameters.NO_VIEWS_ORIG*dimz*nr/frames);

@@ -6,8 +6,8 @@ function  res = Emat_zyxt(mask,b1)
 %	Implementation of parallel MRI encoding matrix for dynamic MRI data
 %	
 %	input:
-%			mask : ky-kx-t sampling mask (Nz,Ny,Nx,Nt)
-%           b1 : coil sensitivity maps (Nz,Ny,Nx,Nc)
+%			mask : ky-kx-t sampling mask (Nx,Ny,Nz,Nt)
+%           b1 : coil sensitivity maps (Nx,Ny,Nz,Nc)
 %
 %	output: the operator
 %
