@@ -27,7 +27,8 @@ if twoD == 1
     end
     
     % samples, views, views2, slices, echoes (frames), experiments, flip-angles
-    kspace = flip(permute(kspace,[1,2,7,3,6,4,5]),1);
+    % kspace = flip(permute(kspace,[1,2,7,3,6,4,5]),1);
+    kspace = permute(kspace,[1,2,7,3,6,4,5]);
     
 else
     
@@ -49,7 +50,8 @@ else
     end
     
     % samples, views, views2, slices, echoes (frames), experiments, flip-angles
-    kspace = flip(permute(kspace,[1,3,2,7,6,4,5]),1);
+    % kspace = flip(permute(kspace,[1,3,2,7,6,4,5]),1);
+    kspace = permute(kspace,[1,3,2,7,6,4,5]);
     
 end
 
