@@ -1,6 +1,9 @@
 function image_out = fft_reco3D_mc(app,kspace_in,nr_coils,ndimx,ndimy,ndimz)
 
 
+% uses tukeywin filter
+filterwidth = 0.2;
+
 % kspace_in = {coil}[X Y Z NR]
 %                    1 2 3 4  
 dimx = size(kspace_in{1},1);
@@ -58,7 +61,8 @@ for dynamic = 1:nr_dynamics
     
     % FFT
     for coil = 1:nr_coils
-        image_tmp(:,:,:,coil) = fft3c_mri(squeeze(kdatai(:,:,:,coil)));
+        filter = tukeywin3d(ndimx,ndimy,ndimz,filterwidth);
+        image_tmp(:,:,:,coil) = fft3c_mri(filter.*squeeze(kdatai(:,:,:,coil)));
     end
     
     % root sum of squares
@@ -73,3 +77,19 @@ app.RecoProgressGauge.Value = 100;
 drawnow;
 
 end
+
+
+function out = tukeywin3d(n1,n2,n3,fw)
+
+if ((n2 == 1) && (n3 ==1))
+    out = tukeywin(n1,fw); 
+elseif n3 == 1 
+    out = bsxfun(@times,tukeywin(n1,fw),tukeywin(n2,fw).'); 
+else
+    out = bsxfun(@times,bsxfun(@times,tukeywin(n1,fw),tukeywin(n2,fw).'),permute(tukeywin(n3,fw),[3 2 1])); 
+end
+
+out = out./(max(out(:))); 
+
+end
+

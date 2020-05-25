@@ -1,6 +1,9 @@
 function image_out = fft_reco2D_mc(app,kspace_in,nr_coils,ndimx,ndimy)
 
 
+% uses tukeywin filter
+filterwidth = 0.2;
+
 % kspace_in = {coil}[X Y slices NR]
 %                    1 2    3    4  
 dimx = size(kspace_in{1},1);
@@ -55,7 +58,8 @@ for slice = 1:nr_slices
         
         % FFT
         for coil = 1:nr_coils
-            image_tmp(:,:,coil) = fft2c_mri(kdatai(:,:,coil));
+            filter = tukeywin(ndimx,filterwidth)*tukeywin(ndimy,filterwidth)';
+            image_tmp(:,:,coil) = fft2c_mri(filter.*squeeze(kdatai(:,:,coil)));
         end
         
         % root sum of squares
