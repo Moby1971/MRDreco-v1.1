@@ -1,4 +1,4 @@
-function export_dicom_MRD(app,directory,im,parameters,tag)
+function export_dicom_MRD(app,directory,image,parameters,tag)
 
 
 % create folder if not exist, and clear
@@ -6,7 +6,15 @@ folder_name = [directory,[filesep,'DICOM-',tag]];
 if (~exist(folder_name, 'dir')); mkdir(folder_name); end
 delete([folder_name,filesep,'*']);
 
-[dimx,dimy,dimz,NR,NFA,NE] = size(im);
+% Phase orientation
+if isfield(app.seqpar, 'PHASE_ORIENTATION')
+    if app.seqpar.PHASE_ORIENTATION == 1
+        app.TextMessage('INFO: phase orientation = 1');
+        image = permute(rot90(permute(image,[2 1 3 4 5 6]),1),[2 1 3 4 5 6]);
+    end
+end
+
+[dimx,dimy,dimz,NR,NFA,NE] = size(image);
 
 % export the dicom images
 
@@ -34,10 +42,10 @@ for i=1:NR      % loop over all repetitions
                 fname = [folder_name,filesep,'DICOM-XD-',fn,'.dcm'];
                 
                 % Dicom header
-                dcm_header = generate_dicomheader_MRD(parameters,fname,filecounter,i,j,k,z,dimx,dimy,dimz,dcmid);
+                dcm_header = generate_dicomheader_MRD(app,parameters,fname,filecounter,i,j,k,z,dimx,dimy,dimz,dcmid);
                 
                 % The image
-                image = rot90(squeeze(cast(round(im(:,:,z,i,j,k)),'uint16')));
+                image = rot90(squeeze(cast(round(image(:,:,z,i,j,k)),'uint16')));
                 
                 % Write the dicom file
                 dicomwrite(image, fname, dcm_header);

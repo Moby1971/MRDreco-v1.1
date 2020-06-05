@@ -15,8 +15,13 @@ function dicom_header = generate_dicomheader_DCM(app,dcmhead,parameters,fn,filec
 
 frametime = parameters.acqdur/nr_frames;    % time between frames in ms
 
-pixely = app.FOVViewField2.Value/dimy;
-pixelx = app.FOVViewField1.Value/dimx;
+if app.seqpar.PHASE_ORIENTATION == 1
+    pixely = app.FOVViewField1.Value/dimy;
+    pixelx = app.FOVViewField2.Value/dimx;
+else
+    pixely = app.FOVViewField2.Value/dimy;
+    pixelx = app.FOVViewField1.Value/dimx;
+end
 
 fn = ['0000',num2str(frame)];
 fn = fn(size(fn,2)-4:size(fn,2));

@@ -6,9 +6,13 @@ folder_name = [directory,[filesep,'DICOM-',tag]];
 if (~exist(folder_name, 'dir')); mkdir(folder_name); end
 delete([folder_name,filesep,'*']);
 
-%if parameters.PHASE_ORIENTATION == 1
-%   permute(image,[2 1 3 4 5 6]); 
-%end
+% Phase orientation
+if isfield(app.seqpar, 'PHASE_ORIENTATION')
+    if app.seqpar.PHASE_ORIENTATION == 1
+        app.TextMessage('INFO: phase orientation = 1');
+        image = permute(rot90(permute(image,[2 1 3 4 5 6]),1),[2 1 3 4 5 6]);
+    end
+end
 
 % size of the data
 dimx = size(image,1);

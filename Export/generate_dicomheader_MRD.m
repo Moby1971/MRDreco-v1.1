@@ -1,4 +1,4 @@
-function dicom_header = generate_dicomheader_MRD(parameters,fname,filecounter,i,j,k,z,dimx,dimy,dimz,dcmid)
+function dicom_header = generate_dicomheader_MRD(app,parameters,fname,filecounter,i,j,k,z,dimx,dimy,dimz,dcmid)
 
 %
 % GENERATES DICOM HEADER FOR EXPORT
@@ -17,8 +17,14 @@ function dicom_header = generate_dicomheader_MRD(parameters,fname,filecounter,i,
 
 acq_dur = parameters.nr_frames * parameters.timeperframe;   % acquisition time in seconds
 
-pixelx = parameters.FOV/dimx;
-pixely = parameters.aratio*parameters.FOV/dimy;
+if app.seqpar.PHASE_ORIENTATION == 1
+    pixelx = parameters.aratio*parameters.FOV/dimx;
+    pixely = parameters.FOV/dimy;
+else
+    pixelx = parameters.FOV/dimx;
+    pixely = parameters.aratio*parameters.FOV/dimy;
+end
+
 pixelz = parameters.NO_SLICES*parameters.SLICE_THICKNESS/dimz;
 
 dt = datetime(parameters.date,'InputFormat','dd-MMM-yyyy HH:mm:ss');
