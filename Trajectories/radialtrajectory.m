@@ -19,7 +19,7 @@ close all force;
 outputdir = pwd;
 
 dimy = 96;
-dimz = 64;
+dimz = 48;
 
 
 tiny_golden_angles = [111.24611, 68.75388, 49.75077, 38.97762, 32.03967, 23.62814, 20.88643, 18.71484, 16.95229];
