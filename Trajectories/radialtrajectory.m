@@ -18,7 +18,7 @@ close all force;
 
 outputdir = pwd;
 
-dimy = 64;
+dimy = 96;
 dimz = 64;
 
 
@@ -66,9 +66,9 @@ fileID = fopen(filename,'w');
 for i = 1:length(kspacelist)
    
     fprintf(fileID,num2str(kspacelist(i,1)));
-    fprintf(fileID,',');
+    fprintf(fileID,'\n');
     fprintf(fileID,num2str(kspacelist(i,2)));
-    fprintf(fileID,',\n');
+    fprintf(fileID,'\n');
     
 end
 
@@ -78,14 +78,14 @@ fclose(fileID);
 
 %% Display the trajectory
 
-figure;
-plot1 = scatter(kspacelist(1,1),kspacelist(1,2),'s');
-
-for i=1:length(kspacelist)
-    plot1.XData = kspacelist(1:i,1); 
-    plot1.YData = kspacelist(1:i,2); 
-    pause(0.000001);
-    
-end
+% figure;
+% plot1 = scatter(kspacelist(1,1),kspacelist(1,2),'s');
+% 
+% for i=1:length(kspacelist)
+%     plot1.XData = kspacelist(1:i,1); 
+%     plot1.YData = kspacelist(1:i,2); 
+%     pause(0.000001);
+%     
+% end
 
 
