@@ -64,8 +64,12 @@ function data2mrd(filename, data, dimensions, footer)
     % Write 512 byte header
     fwrite(fid1,header1,'int32');
 
+    % For 3D data flip the 2nd and 3rd dimension
+    if (size(data,3)>1)
+        data = flip(permute(data,[1,3,2,4,5,6,7]),2);
+    end
+    
     % Convert to 1D array with alternating real and imag part of the data
-    %temp = flip(permute(data,[2,1,3,4,5,6,7]),2);
     temp = data;
     temp = temp(:);
     a = real(temp);
