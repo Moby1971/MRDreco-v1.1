@@ -61,8 +61,7 @@ for dynamic = 1:nr_dynamics
     
     % FFT
     for coil = 1:nr_coils
-        filter = tukeywin3d(ndimx,ndimy,ndimz,filterwidth);
-        image_tmp(:,:,:,coil) = fft3c_mri(filter.*squeeze(kdatai(:,:,:,coil)));
+        image_tmp(:,:,:,coil) = fft3c_mri(squeeze(kdatai(:,:,:,coil)));
     end
     
     % root sum of squares
@@ -79,17 +78,4 @@ drawnow;
 end
 
 
-function out = tukeywin3d(n1,n2,n3,fw)
-
-if ((n2 == 1) && (n3 ==1))
-    out = tukeywin(n1,fw); 
-elseif n3 == 1 
-    out = bsxfun(@times,tukeywin(n1,fw),tukeywin(n2,fw).'); 
-else
-    out = bsxfun(@times,bsxfun(@times,tukeywin(n1,fw),tukeywin(n2,fw).'),permute(tukeywin(n3,fw),[3 2 1])); 
-end
-
-out = out./(max(out(:))); 
-
-end
 

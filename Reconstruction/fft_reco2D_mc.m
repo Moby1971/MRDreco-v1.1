@@ -58,8 +58,7 @@ for slice = 1:nr_slices
         
         % FFT
         for coil = 1:nr_coils
-            filter = tukeywin(ndimx,filterwidth)*tukeywin(ndimy,filterwidth)';
-            image_tmp(:,:,coil) = fft2c_mri(filter.*squeeze(kdatai(:,:,coil)));
+            image_tmp(:,:,coil) = fft2c_mri(squeeze(kdatai(:,:,coil)));
         end
         
         % root sum of squares
