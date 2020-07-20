@@ -1,9 +1,6 @@
 function image_out = fft_reco3D_mc(app,kspace_in,nr_coils,ndimx,ndimy,ndimz)
 
 
-% uses tukeywin filter
-filterwidth = 0.2;
-
 % kspace_in = {coil}[X Y Z NR]
 %                    1 2 3 4  
 dimx = size(kspace_in{1},1);
@@ -16,9 +13,11 @@ for i = 1:nr_coils
     kspace(:,:,:,:,i) = kspace_in{i};
 end
 
+
 % reset progress counter
 app.RecoProgressGauge.Value = 0;
 drawnow;
+
 
 % dynamic loop
 for dynamic = 1:nr_dynamics

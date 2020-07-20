@@ -1,8 +1,6 @@
 function image_out = fft_reco2D_mc(app,kspace_in,nr_coils,ndimx,ndimy)
 
 
-% uses tukeywin filter
-filterwidth = 0.2;
 
 % kspace_in = {coil}[X Y slices NR]
 %                    1 2    3    4  
@@ -20,6 +18,7 @@ end
 for i = 1:nr_coils
     kspace(:,:,:,:,i) = kspace_in{i};
 end
+
 
 % reset progress counter
 app.RecoProgressGauge.Value = 0;

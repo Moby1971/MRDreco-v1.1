@@ -107,10 +107,16 @@ kspace_out = kspace(:,:,:,1:frames);
 nsaspace_out = nsaspace(:,:,:,1:frames);
 
 
+
+
 % for k-space filling visualization
 fillingspace = nsaspace./nsaspace;
 fillingspace(isnan(fillingspace)) = 0;
 fillingspace_out = fillingspace(:,:,:,1:frames);
+
+
+
+
 
 
 end
