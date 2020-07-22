@@ -18,12 +18,14 @@ close all force;
 
 outputdir = pwd;
 
-dimy = 96;
-dimz = 48;
-
-
-tiny_golden_angles = [111.24611, 68.75388, 49.75077, 38.97762, 32.03967, 23.62814, 20.88643, 18.71484, 16.95229];
+dimy = 64;
+dimz = 64;
+order = 1;   % 1 = back and forth, 2 = one direction
 angle_nr = 1;
+display = true;
+
+tiny_golden_angles = [111.24611, 68.75388, 49.75077, 38.97762, 32.03967, 27.19840, 23.62814, 20.88643, 18.71484, 16.95229];
+
 
 %% fill the list
 
@@ -39,10 +41,37 @@ for ns = 1:number_of_spokes
     
     nr=1;
     clear c;
-    for i=-1:step:1-step
+    
+    if order == 1
         
-        c(nr,:) = [floor(ry * i * cos(angle*pi/180)),floor(rz * i * sin(angle*pi/180))];
-        nr = nr + 1;
+        if rem(ns,2)
+            
+            for i=-1:step:1-step
+                
+                c(nr,:) = [floor(ry * i * cos(angle*pi/180)),floor(rz * i * sin(angle*pi/180))];
+                nr = nr + 1;
+                
+            end
+            
+        else
+            
+            for i=1-step:-step:-1
+                
+                c(nr,:) = [floor(ry * i * cos(angle*pi/180)),floor(rz * i * sin(angle*pi/180))];
+                nr = nr + 1;
+                
+            end
+            
+        end
+        
+    else
+        
+        for i=-1:step:1-step
+            
+            c(nr,:) = [floor(ry * i * cos(angle*pi/180)),floor(rz * i * sin(angle*pi/180))];
+            nr = nr + 1;
+            
+        end
         
     end
     
@@ -60,7 +89,13 @@ end
 kspacelist = kspacelist(1:dimy*dimz,:);
 disp(length(kspacelist))
 
-filename = strcat(outputdir,filesep,'Radial_trajectory_dimy=',num2str(dimy),'_dimz=',num2str(dimz),'_angle=',num2str(tiny_golden_angles(angle_nr)),'.txt');
+if order == 1 
+    ord = 'reverse';
+else
+    ord = 'onedir';
+end
+
+filename = strcat(outputdir,filesep,'Radial_trajectory_dimy=',num2str(dimy),'_dimz=',num2str(dimz),'_angle=',num2str(tiny_golden_angles(angle_nr)),'_',ord,'.txt');
 fileID = fopen(filename,'w');
 
 for i = 1:length(kspacelist)
@@ -78,14 +113,15 @@ fclose(fileID);
 
 %% Display the trajectory
 
-% figure;
-% plot1 = scatter(kspacelist(1,1),kspacelist(1,2),'s');
-% 
-% for i=1:length(kspacelist)
-%     plot1.XData = kspacelist(1:i,1); 
-%     plot1.YData = kspacelist(1:i,2); 
-%     pause(0.000001);
-%     
-% end
-
-
+if display
+    
+    figure(1);
+    plot1 = scatter(kspacelist(1,1),kspacelist(1,2),'s');
+    
+    for i=1:length(kspacelist)
+        plot1.XData = kspacelist(1:i,1);
+        plot1.YData = kspacelist(1:i,2);
+        pause(0.000001);
+    end
+    
+end
