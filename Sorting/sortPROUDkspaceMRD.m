@@ -112,4 +112,22 @@ fillingspace(isnan(fillingspace)) = 0;
 fillingspace_out = fillingspace(:,:,:,1:frames);
 
 
+% find the field of fiew offsets in the mrd footer
+% ugly, but it seems to work for now
+% k = strfind(app.mrdfooter,':FOV_OFFSETS 1');
+% w = strfind(app.mrdfooter,':VAR FOVf');
+% str = extractBetween(app.mrdfooter,k,w);
+% v = strfind(str{1},',');
+% j = strfind(str{1},':');
+% sx = extractBetween(str{1},v(1)+1,v(2)-1);
+% sy = extractBetween(str{1},v(2)+1,v(3)-1);
+% sz = extractBetween(str{1},v(3)+1,j(2)-3);
+% shiftx = str2num(sx{1})
+% shifty = str2num(sy{1})
+% shiftz = str2num(sz{1})
+
+
+
+
+
 end
