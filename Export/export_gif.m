@@ -41,7 +41,14 @@ for i=1:nr_frames % loop over all repetitions
         
         for j=1:NFA      % loop over all flip angles
             
-            if app.seqpar.frame_loop_on == 1
+            cine = false;
+            if isfield(app.seqpar,'frame_loop_on')
+                if (app.seqpar.frame_loop_on == 1)
+                    cine = true;
+                end
+            end
+            
+            if cine
                 
                 % File name
                 fname = [folder_name,filesep,'movie_d',num2str(i),'_s',num2str(z),'_fa',num2str(j),'.gif'];
