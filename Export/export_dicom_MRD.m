@@ -16,6 +16,7 @@ end
 
 [dimx,dimy,dimz,NR,NFA,NE] = size(image);
 
+
 % export the dicom images
 
 dcmid = dicomuid;   % unique identifier
@@ -45,10 +46,10 @@ for i=1:NR      % loop over all repetitions
                 dcm_header = generate_dicomheader_MRD(app,parameters,fname,filecounter,i,j,k,z,dimx,dimy,dimz,dcmid);
                 
                 % The image
-                image = rot90(squeeze(cast(round(image(:,:,z,i,j,k)),'uint16')));
+                image1 = rot90(squeeze(cast(round(image(:,:,z,i,j,k)),'uint16')));
                 
                 % Write the dicom file
-                dicomwrite(image, fname, dcm_header);
+                dicomwrite(image1, fname, dcm_header);
                 
                 % Update progress bar
                 app.ExportProgressGauge.Value = round(100*filecounter/totalnumberofimages);
