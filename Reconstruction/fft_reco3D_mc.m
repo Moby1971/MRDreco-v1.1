@@ -1,4 +1,4 @@
-function image_out = fft_reco3D_mc(app,kspace_in,nr_coils,ndimx,ndimy,ndimz)
+function image_out = fft_reco3D_mc(app,kspace_in,nr_coils,autosense,coilsensitivies,coilactive,ndimx,ndimy,ndimz)
 
 
 % kspace_in = {coil}[X Y Z NR]
@@ -8,11 +8,21 @@ dimy = size(kspace_in{1},2);
 dimz = size(kspace_in{1},3);
 nr_dynamics = size(kspace_in{1},4);
 
-% kspace data x,y,z,NR,coils
-for i = 1:nr_coils
-    kspace(:,:,:,:,i) = kspace_in{i};
+% kspace data x,y,NR,slices,coils
+if autosense == 1
+    
+    for i = 1:nr_coils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilactive(i);
+    end
+    
+else
+    
+    for i = 1:nr_coils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilsensitivies(i)*coilactive(i);
+    end
+    
 end
-
+    
 
 % reset progress counter
 app.RecoProgressGauge.Value = 0;

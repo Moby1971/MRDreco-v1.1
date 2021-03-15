@@ -1,4 +1,4 @@
-function images = cs_reco2D_mc(app,kspace_in,ncoils,Wavelet,TVxy,TVd,dimx_new,dimy_new,dimd_new)
+function images = cs_reco2D_mc(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxy,TVd,dimx_new,dimy_new,dimd_new)
 
 % app = matlab app
 % kspace_in = sorted k-space 
@@ -22,10 +22,11 @@ for i = 1:ncoils
 end
 
 
-% put all data in a normal matrix
+% kspace data x,y,NR,slices,coils
 for i = 1:ncoils
-    kspace(:,:,:,:,:,i) = kspace_in{i};
+    kspace(:,:,:,:,:,i) = kspace_in{i}*coilactive(i);
 end
+
 
 
 % Bart dimensions
@@ -54,7 +55,9 @@ kspace_pics = permute(kspace,[5 ,2 ,1 ,6 ,7 ,8 ,9 ,10,11,12,4 ,13,14,3 ]);
 % total variation in dynamic dimension 2^10 = 1024
 
 
-if ncoils>1
+
+
+if ncoils>1 && autosense==1
     
     % ESPIRiT reconstruction
     TextMessage(app,'ESPIRiT reconstruction ...');
@@ -63,26 +66,43 @@ if ncoils>1
     kspace_pics_sum = sum(kspace_pics,[11,12]);
     sensitivities = bart('ecalib -S -I -a', kspace_pics_sum);      % ecalib with softsense
     
+    % For debugging purposes
+    % disp(size(sensitivities))
+    % figure(1)
+    % imshow(rot90(flip(squeeze(abs(sensitivities(1,:,:,1,1))),2)),[]);
+    % figure(2)
+    % imshow(rot90(flip(squeeze(abs(sensitivities(1,:,:,2,1))),2)),[]);
+    % figure(3)
+    % imshow(rot90(flip(squeeze(abs(sensitivities(1,:,:,3,1))),2)),[]);
+    % figure(4)
+    % imshow(rot90(flip(squeeze(abs(sensitivities(1,:,:,4,1))),2)),[]);
+    
     picscommand = ['pics -S -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1024:0:',num2str(TVd)];
     image_reg = bart(picscommand,kspace_pics,sensitivities);
     
     % Sum of squares reconstruction
     image_reg = bart('rss 16', image_reg);
     image_reg = abs(image_reg);
- 
-else
     
-    % Reconstruction without sensitivity correction
+end
+
+
+if ncoils==1 || autosense==0
+    
+    % Sensitivity correction
     sensitivities = ones(1,dimy,dimx,ncoils,1,1,1,1,1,1,1,1,1,dimz);
-    
+    for i = 1:ncoils
+        sensitivities(:,:,:,i,:) = sensitivities(:,:,:,i,:)*coilsensitivities(i)*coilactive(i);
+    end
+  
     % regular reconstruction
     picscommand = ['pics -S -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1024:0:',num2str(TVd)];
     image_reg = bart(picscommand,kspace_pics,sensitivities);
-    
-    % Take absolute values
     image_reg = abs(image_reg);
     
 end
+
+
 
 
 % rearrange to correct orientation: x, y, slices, dynamics

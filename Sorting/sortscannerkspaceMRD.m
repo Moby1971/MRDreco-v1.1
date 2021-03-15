@@ -22,7 +22,6 @@ end
 % counter
 tcnt = 1;
 
-
 % some parameters
 ktable = ktable + 1;
 
@@ -48,8 +47,10 @@ for te_cnt=1:nrte
                     
                     % sorting including phase correction based on navigator
                     for j = firsty+1:dimy
+                        
                         idx = mod(j-firsty+1,firsty)+1;
                         y = ktable(j)+round(firsty/2);
+                        
                         kspace(:,y,k,nr_cnt,fa_cnt,te_cnt) = kspace_in(:,j,k,nr_cnt,fa_cnt,te_cnt).*exp(-1i*PHshift(idx));
                     
                         for w = 1:dimx

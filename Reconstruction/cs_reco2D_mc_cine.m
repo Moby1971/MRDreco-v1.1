@@ -1,4 +1,4 @@
-function images = cs_reco2D_mc_cine(app,kspace_in,ncoils,Wavelet,TVxy,TVd,dimx_new,dimy_new,dimd_new)
+function images = cs_reco2D_mc_cine(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxy,TVd,dimx_new,dimy_new,dimd_new)
 
 % app = matlab app
 % kspace_in = sorted k-space 
@@ -25,8 +25,9 @@ end
 
 % put all data in a normal matrix
 for i = 1:ncoils
-    kspace(:,:,:,:,:,:,1,i) = kspace_in{i};
+    kspace(:,:,:,:,:,:,1,i) = kspace_in{i}*coilactive(i);
 end
+
 
 
 % Bart dimensions
@@ -55,7 +56,7 @@ kspace_pics = permute(kspace,[7 ,2 ,1 ,8 ,9 ,6 ,5 ,10,11,12,4 ,13,14,3 ]);
 % total variation in TE and dynamic dimension 2^5 + 2^10 = 1056
 
 
-if ncoils>1
+if ncoils>1 && autosense==1
     
     % ESPIRiT reconstruction
     TextMessage(app,'ESPIRiT reconstruction ...');
@@ -71,10 +72,16 @@ if ncoils>1
     image_reg = bart('rss 16', image_reg);
     image_reg = abs(image_reg);
  
-else
+end
     
-    % Reconstruction without sensitivity correction
+    
+if ncoils==1 || autosense==0
+    
+    % Sensitivity correction
     sensitivities = ones(1,dimy,dimx,ncoils,1,1,1,1,1,1,1,1,1,dimz);
+    for i = 1:ncoils
+        sensitivities(:,:,:,i,:) = sensitivities(:,:,:,i,:)*coilsensitivities(i)*coilactive(i);
+    end
     
     % regular reconstruction
     picscommand = ['pics -S -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];

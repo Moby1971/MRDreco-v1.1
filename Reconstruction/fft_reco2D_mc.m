@@ -1,4 +1,4 @@
-function image_out = fft_reco2D_mc(app,kspace_in,nr_coils,ndimx,ndimy)
+function image_out = fft_reco2D_mc(app,kspace_in,nr_coils,autosense,coilsensitivies,coilactive,ndimx,ndimy)
 
 
 
@@ -14,11 +14,22 @@ for i = 1:nr_coils
     kspace_in{i} = permute(kspace_in{i},[1,2,4,3]);
 end
 
-% kspace data x,y,NR,slices,coils
-for i = 1:nr_coils
-    kspace(:,:,:,:,i) = kspace_in{i};
-end
 
+% kspace data x,y,NR,slices,coils
+if autosense == 1
+    
+    for i = 1:nr_coils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilactive(i);
+    end
+    
+else
+    
+    for i = 1:nr_coils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilsensitivies(i)*coilactive(i);
+    end
+    
+end
+    
 
 % reset progress counter
 app.RecoProgressGauge.Value = 0;
@@ -66,6 +77,7 @@ for slice = 1:nr_slices
     end
     
 end
+
 
 image_out = flip(image_out,2);
 

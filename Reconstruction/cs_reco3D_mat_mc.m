@@ -1,4 +1,4 @@
-function image_out = cs_reco3D_mat_mc(app,kspace_in,averages,ncoils,lambda_W,lambda_TV,ndimx,ndimy,ndimz)
+function image_out = cs_reco3D_mat_mc(app,kspace_in,averages,ncoils,autosense,coilsensitivities,coilactive,lambda_W,lambda_TV,ndimx,ndimy,ndimz)
 
 
 % kspace_in = {coil}[X Y Z NR]
@@ -8,10 +8,19 @@ dimy = size(kspace_in{1},2);
 dimz = size(kspace_in{1},3);
 nr_dynamics = size(kspace_in{1},4);
 
+
 % kspace data [x,y,z,dynamics,coils]
-for i = 1:ncoils
-    kspace(:,:,:,:,i) = kspace_in{i};
+if autosense == 1
+    for i = 1:ncoils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilactive(i);
+    end
+else
+    for i = 1:ncoils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilsensitivities(i)*coilactive(i);
+    end
 end
+
+
 
 % reset progress counter
 param.iteration = 0;

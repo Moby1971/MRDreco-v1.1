@@ -1,4 +1,4 @@
-function image_out = cs_reco2D_mat_mc(app,kspace_in,averages,ncoils,lambda_W,lambda_TV,ndimx,ndimy)
+function image_out = cs_reco2D_mat_mc(app,kspace_in,averages,ncoils,autosense,coilsensitivities,coilactive,lambda_W,lambda_TV,ndimx,ndimy)
 
 
 % kspace_in = {coil}[X Y slices NR]
@@ -8,16 +8,25 @@ dimy = size(kspace_in{1},2);
 nr_slices = size(kspace_in{1},3);
 nr_dynamics = size(kspace_in{1},4);
 
+
 % kspace data x,y,NR,slices
 for i = 1:ncoils
     kspace_in{i} = permute(kspace_in{i},[1,2,4,3]);
 end
 averages = permute(averages,[1,2,4,3]);
 
+
 % kspace data x,y,NR,slices,coils
-for i = 1:ncoils
-    kspace(:,:,:,:,i) = kspace_in{i};
+if autosense == 1
+    for i = 1:ncoils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilactive(i);
+    end
+else
+    for i = 1:ncoils
+        kspace(:,:,:,:,i) = kspace_in{i}*coilsensitivities(i)*coilactive(i);
+    end
 end
+
 
 % reset progress counter
 param.iteration = 0;
@@ -27,14 +36,14 @@ drawnow;
 % slice loop
 for slice = 1:nr_slices
     
-    % kspace of slice
-    kdata = squeeze(kspace(:,:,:,slice,:));
-    mask = squeeze(averages(:,:,:,slice));
-    
     % fool the reco if nr_dynamics = 1, it needs at least 2 dynamics
     if nr_dynamics == 1
-        kdata(:,:,2,:) = kdata(:,:,1,:);
+        kspace(:,:,2,:) = kspace(:,:,1,:);
     end
+    
+      % kspace of slice
+    kdata = squeeze(kspace(:,:,:,slice,:));
+    mask = squeeze(averages(:,:,:,slice,1));
     
     % zero-fill or crop x-dimension
     if ndimx > dimx
@@ -74,7 +83,7 @@ for slice = 1:nr_slices
     
     % normalize the data in the range of approx 0 - 1 for better numerical stability
     kdatai = kdatai/max(abs(kdatai(:)));
-        
+    
     % coil sensitivity map
     b1 = ones(nx,ny,ncoils);
     

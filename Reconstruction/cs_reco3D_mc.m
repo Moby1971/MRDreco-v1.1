@@ -1,5 +1,5 @@
 
-function images = cs_reco3D_mc(app,kspace_in,ncoils,Wavelet,TVxyz,TVd,dimx_new,dimy_new,dimz_new,dimd_new)
+function images = cs_reco3D_mc(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxyz,TVd,dimx_new,dimy_new,dimz_new,dimd_new)
 
 clc;
 
@@ -14,7 +14,7 @@ dimz = size(kspace_in{1},3);
 dimd = size(kspace_in{1},4);
 
 for i = 1:ncoils
-   kspace(:,:,:,:,i) = kspace_in{i};    
+   kspace(:,:,:,:,i) = kspace_in{i}*coilactive(i);    
 end
 
 
@@ -38,7 +38,7 @@ end
 %                             1  2  3  4  5  6  7  8  9  10 11 
 kspace_pics = permute(kspace,[3 ,2 ,1 ,5 ,6 ,7 ,8 ,9 ,10,11,4 ]);
 
-if ncoils>1
+if ncoils>1 && autosense==1
     
     % ESPIRiT reconstruction
     TextMessage(app,'ESPIRiT reconstruction ...');
@@ -54,10 +54,16 @@ if ncoils>1
     % Sum of squares reconstruction
     image_reg = abs(bart('rss 16', image_reg));
     
-else
+end
     
-    % z,y,x, coils, eleventh dimensions is the time (nr) dimension  (11-1 = 10th for bart)
-    sensitivities = ones(dimz,dimy,dimx,1,1,1,1,1,1,dimd);
+    
+if ncoils==1 || autosense==0
+    
+    % Sensitivity correction
+    sensitivities = ones(dimz,dimy,dimx,ncoils,1,1,1,1,1,dimd);
+    for i = 1:ncoils
+        sensitivities(:,:,:,i,:) = sensitivities(:,:,:,i,:)*coilsensitivities(i)*coilactive(i);
+    end
     
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
     % regular reconstruction
