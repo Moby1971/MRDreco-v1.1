@@ -1,12 +1,16 @@
 
 function images = cs_reco3D_mc(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxyz,TVd,dimx_new,dimy_new,dimz_new,dimd_new)
 
+
 clc;
+
 
 % resize k-space (kx, ky, kz, nr)
 for i=1:ncoils
     kspace_in{i} = bart(['resize -c 0 ',num2str(dimx_new),' 1 ',num2str(dimy_new),' 2 ',num2str(dimz_new),' 3 ',num2str(dimd_new)],kspace_in{i});
 end
+
+
 
 dimx = size(kspace_in{1},1);
 dimy = size(kspace_in{1},2);
@@ -16,6 +20,7 @@ dimd = size(kspace_in{1},4);
 for i = 1:ncoils
    kspace(:,:,:,:,i) = kspace_in{i}*coilactive(i);    
 end
+
 
 
 % Bart dimensions
@@ -37,6 +42,7 @@ end
 
 %                             1  2  3  4  5  6  7  8  9  10 11 
 kspace_pics = permute(kspace,[3 ,2 ,1 ,5 ,6 ,7 ,8 ,9 ,10,11,4 ]);
+
 
 if ncoils>1 && autosense==1
     
@@ -64,7 +70,7 @@ if ncoils==1 || autosense==0
     for i = 1:ncoils
         sensitivities(:,:,:,i,:) = sensitivities(:,:,:,i,:)*coilsensitivities(i)*coilactive(i);
     end
-    
+  
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
     % regular reconstruction
     picscommand = ['pics -S -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVd)];
