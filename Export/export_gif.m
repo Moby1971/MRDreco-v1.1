@@ -1,4 +1,4 @@
-function export_gif(app,directory,image,window,level)
+function export_gif(app,directory,image,window,level,aspect)
 
 
 % create folder if not exist, and delete folder content
@@ -21,7 +21,6 @@ dimz = size(image,3);
 nr_frames = size(image,4);
 NFA = size(image,5);
 NE = size(image,6);
-delay_time = 1/NE;
 
 % scale from 0 to 255
 window = window*255/max(image(:));
@@ -32,6 +31,12 @@ image = image*255/max(image(:));
 image = (255/window)*(image - level + window/2);
 image(image < 0) = 0;
 image(image > 255) = 255;
+
+% resize
+
+numrows = 2*dimx;
+numcols = 2*round(dimy*aspect);
+
 
 % export the gif images
 
@@ -53,10 +58,13 @@ for i=1:nr_frames % loop over all repetitions
                 % File name
                 fname = [folder_name,filesep,'movie_d',num2str(i),'_s',num2str(z),'_fa',num2str(j),'.gif'];
                 
+                % Delay time
+                delay_time = 1/NE;
+                
                 for k=1:NE      % loop over all echo times (cine loop)
                     
                     % The image
-                    im = rot90(squeeze(cast(round(image(:,:,z,i,j,k)),'uint8')));
+                    im = rot90(uint8(round(imresize(squeeze(image(:,:,z,i,j,k)),[numrows numcols]))));
                     
                     % Write the gif file
                     if k==1
@@ -69,16 +77,23 @@ for i=1:nr_frames % loop over all repetitions
                 
             else
                 
+                % Delay time
+                delay_time = 1/nr_frames;
+                
                 for k=1:NE      % loop over all echo times, multi-echo
                     
                     % File name
-                    fname = [folder_name,filesep,'image_d',num2str(i),'_s',num2str(z),'_fa',num2str(j),'_te',num2str(k),'.gif'];
+                    fname = [folder_name,filesep,'image_s',num2str(z),'_fa',num2str(j),'_te',num2str(k),'.gif'];
                     
                     % The image
-                    im = rot90(squeeze(cast(round(image(:,:,z,i,j,k)),'uint8')));
+                    im = rot90(uint8(round(imresize(squeeze(image(:,:,z,i,j,k)),[numrows numcols]))));
                     
                     % Write the gif file
-                    imwrite(im, fname);
+                    if i==1
+                        imwrite(im, fname,'DelayTime',delay_time,'LoopCount',inf);
+                    else
+                        imwrite(im, fname,'DelayTime',delay_time,'WriteMode','append','DelayTime',delay_time);
+                    end
                     
                 end
                 
