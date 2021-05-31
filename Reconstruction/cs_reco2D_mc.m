@@ -22,7 +22,10 @@ for i = 1:ncoils
 end
 
 
+
+
 % kspace data x,y,NR,slices,coils
+kspace = zeros(dimx,dimy,dimz,dimd,1,ncoils);
 for i = 1:ncoils
     kspace(:,:,:,:,:,i) = kspace_in{i}*coilactive(i);
 end
@@ -46,6 +49,7 @@ end
 % 	SLICE_DIM,      14  slices
 % 	AVG_DIM,        15
 
+%                             0  1  2  3  4  5  6  7  8  9  10 11 12 13
 %                             1  2  3  4  5  6  7  8  9  10 11 12 13 14
 kspace_pics = permute(kspace,[5 ,2 ,1 ,6 ,7 ,8 ,9 ,10,11,12,4 ,13,14,3 ]);
 
@@ -53,8 +57,6 @@ kspace_pics = permute(kspace,[5 ,2 ,1 ,6 ,7 ,8 ,9 ,10,11,12,4 ,13,14,3 ]);
 % wavelet in y and x spatial dimensions 2^1+2^2=6
 % total variation in y and x spatial dimensions 2^1+2^2=6
 % total variation in dynamic dimension 2^10 = 1024
-
-
 
 
 if ncoils>1 && autosense==1
