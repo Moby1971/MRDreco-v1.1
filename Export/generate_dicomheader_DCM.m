@@ -88,8 +88,10 @@ dcmhead.SpacingBetweenSlices = parameters.SLICE_SEPARATION/parameters.SLICE_INTE
 dcmhead.EchoTrainLength = parameters.NO_ECHOES;
 dcmhead.FlipAngle = parameters.flipanglearray(j);           % FLIP ANGLES
 
-startslice = dcmhead.SliceLocation;
-dcmhead.SliceLocation = startslice+(slice-1)*(parameters.SLICE_SEPARATION/parameters.SLICE_INTERLEAVE);
+if isfield(dcmhead, 'SliceLocation')
+    startslice = dcmhead.SliceLocation;
+    dcmhead.SliceLocation = startslice+(slice-1)*(parameters.SLICE_SEPARATION/parameters.SLICE_INTERLEAVE);
+end
 
 dicom_header = dcmhead;
 
