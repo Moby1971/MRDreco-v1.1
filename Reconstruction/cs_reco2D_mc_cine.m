@@ -1,4 +1,4 @@
-function images = cs_reco2D_mc_cine(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxy,TVd,dimx_new,dimy_new,dimd_new)
+function images = cs_reco2D_mc_cine(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxy,LR,TVd,dimx_new,dimy_new,dimd_new)
 
 % app = matlab app
 % kspace_in = sorted k-space 
@@ -65,7 +65,7 @@ if ncoils>1 && autosense==1
     kspace_pics_sum = sum(kspace_pics,[11,12]);
     sensitivities = bart('ecalib -S -I -a', kspace_pics_sum);      % ecalib with softsense
     
-    picscommand = ['pics -S -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];
+    picscommand = ['pics -S -RL:6:7:',num2str(LR),' -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];
     image_reg = bart(picscommand,kspace_pics,sensitivities);
     
     % Sum of squares reconstruction
@@ -84,7 +84,7 @@ if ncoils==1 || autosense==0
     end
     
     % regular reconstruction
-    picscommand = ['pics -S -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];
+    picscommand = ['pics -S -RL:6:7:',num2str(LR),' -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];
     image_reg = bart(picscommand,kspace_pics,sensitivities);
     
     % Take absolute values

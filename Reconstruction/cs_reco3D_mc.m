@@ -1,5 +1,5 @@
 
-function images = cs_reco3D_mc(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxyz,TVd,dimx_new,dimy_new,dimz_new,dimd_new)
+function images = cs_reco3D_mc(app,kspace_in,ncoils,autosense,coilsensitivities,coilactive,Wavelet,TVxyz,LR,TVd,dimx_new,dimy_new,dimz_new,dimd_new)
 
 
 clc;
@@ -54,10 +54,22 @@ if ncoils>1 && autosense==1
     sensitivities = bart('ecalib -I -S -a', kspace_pics_sum);
     
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
-    picscommand = ['pics -S -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVd)];
+    picscommand = 'pics -S'; 
+    if Wavelet>0
+       picscommand = [picscommand, ' -RW:7:0:',num2str(Wavelet)];
+    end
+    if TVxyz>0
+       picscommand = [picscommand, ' -RT:7:0:',num2str(TVxyz)];
+    end
+    if LR>0
+       picscommand = [picscommand, ' -RL:7:7:',num2str(LR)];
+    end 
+    if TVd>0
+       picscommand = [picscommand, ' -RT:1024:0:',num2str(TVd)];
+    end
     image_reg = bart(picscommand,kspace_pics,sensitivities);
     
-    % Sum of squares reconstruction
+    % Sum of squares
     image_reg = abs(bart('rss 16', image_reg));
     
 end
@@ -73,8 +85,22 @@ if ncoils==1 || autosense==0
   
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
     % regular reconstruction
-    picscommand = ['pics -S -RW:7:0:',num2str(Wavelet),' -RT:7:0:',num2str(TVxyz),' -RT:1024:0:',num2str(TVd)];
+    picscommand = 'pics -S'; 
+    if Wavelet>0
+       picscommand = [picscommand, ' -RW:7:0:',num2str(Wavelet)];
+    end
+    if TVxyz>0
+       picscommand = [picscommand, ' -RT:7:0:',num2str(TVxyz)];
+    end
+    if LR>0
+       picscommand = [picscommand, ' -RL:7:7:',num2str(LR)];
+    end 
+    if TVd>0
+       picscommand = [picscommand, ' -RT:1024:0:',num2str(TVd)];
+    end
     image_reg = bart(picscommand,kspace_pics,sensitivities);
+    
+    % Absolute value
     image_reg = abs(image_reg);
     
 end
