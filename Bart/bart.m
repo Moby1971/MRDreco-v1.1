@@ -1,4 +1,4 @@
-function [varargout] = bart(cmd, varargin)
+function [varargout] = bart(app, cmd, varargin)
 % Call BART command from Matlab.
 
 
@@ -7,7 +7,7 @@ function [varargout] = bart(cmd, varargin)
 %%%%% WINDOWS %%%%%%
 if ispc
     
-    if nargin==0 || all(cmd==0)
+    if nargin==1 || all(cmd==0)
         disp('Usage: bart <command> <arguments...>');
         return
     end
@@ -21,9 +21,9 @@ if ispc
     name = strrep(tempname,' ','_');   % Windows user names with spaces give problems
     
  
-	in = cell(1, nargin - 1);
+	in = cell(1, nargin - 2);
 
-	for i=1:nargin - 1
+	for i=1:nargin - 2
 		in{i} = strcat(name, 'in', num2str(i));
 		writecfl(in{i}, varargin{i});
 	end
@@ -43,9 +43,11 @@ if ispc
     in_strWSL = WSLPathCorrection(in_str);
     out_strWSL =  WSLPathCorrection(out_str);
     
-    ERR = system(['wsl bart ',cmd,in_strWSL,out_strWSL]);
+    [ERR,cmdout] = system(['wsl bart ',cmd,in_strWSL,out_strWSL]);
     
-    for i=1:nargin - 1
+    app.TextMessage(cmdout);
+    
+    for i=1:nargin - 2
         if (exist(strcat(in{i}, '.cfl'),'file'))
             delete(strcat(in{i}, '.cfl'));
         end
@@ -80,7 +82,7 @@ end
 
 if ismac
      
-    if nargin==0 || all(cmd==0)
+    if nargin==1 || all(cmd==0)
         disp('Usage: bart <command> <arguments...>');
         return
     end
@@ -108,9 +110,9 @@ if ismac
     
     name = tempname;
     
-    in = cell(1, nargin - 1);
+    in = cell(1, nargin - 2);
     
-    for i=1:nargin - 1
+    for i=1:nargin - 2
         in{i} = strcat(name, 'in', num2str(i));
         writecfl(in{i}, varargin{i});
     end
@@ -125,9 +127,11 @@ if ismac
     
     out_str = sprintf(' %s', out{:});
     
-    ERR = system([bart_path, '/bart ', cmd, ' ', in_str, ' ', out_str]);
+    [ERR,cmdout] = system([bart_path, '/bart ', cmd, ' ', in_str, ' ', out_str]);
     
-    for i=1:nargin - 1
+    app.TextMessage(cmdout);
+    
+    for i=1:nargin - 2
         if (exist(strcat(in{i}, '.cfl'),'file'))
             delete(strcat(in{i}, '.cfl'));
         end
@@ -150,7 +154,7 @@ if ismac
     end
     
     if ERR~=0
-        error('command exited with an error');
+        app.TextMessage('Error in Bart ...');
     end
    
 end

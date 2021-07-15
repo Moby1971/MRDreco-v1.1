@@ -7,7 +7,7 @@ clc;
 
 % resize k-space (kx, ky, kz, nr)
 for i=1:ncoils
-    kspace_in{i} = bart(['resize -c 0 ',num2str(dimx_new),' 1 ',num2str(dimy_new),' 2 ',num2str(dimz_new),' 3 ',num2str(dimd_new)],kspace_in{i});
+    kspace_in{i} = bart(app,['resize -c 0 ',num2str(dimx_new),' 1 ',num2str(dimy_new),' 2 ',num2str(dimz_new),' 3 ',num2str(dimd_new)],kspace_in{i});
 end
 
 
@@ -51,7 +51,7 @@ if ncoils>1 && autosense==1
     
     % espirit sensitivity maps
     kspace_pics_sum = sum(kspace_pics,11);
-    sensitivities = bart('ecalib -I -S -a', kspace_pics_sum);
+    sensitivities = bart(app,'ecalib -I -S -a', kspace_pics_sum);
     
     % wavelet and TV in spatial dimensions 2^0+2^1+2^2=7, total variation in time 2^10 = 1024
     picscommand = 'pics -S'; 
@@ -67,10 +67,10 @@ if ncoils>1 && autosense==1
     if TVd>0
        picscommand = [picscommand, ' -RT:1024:0:',num2str(TVd)];
     end
-    image_reg = bart(picscommand,kspace_pics,sensitivities);
+    image_reg = bart(app,picscommand,kspace_pics,sensitivities);
     
     % Sum of squares
-    image_reg = abs(bart('rss 16', image_reg));
+    image_reg = abs(bart(app,'rss 16', image_reg));
     
 end
     
@@ -98,7 +98,7 @@ if ncoils==1 || autosense==0
     if TVd>0
        picscommand = [picscommand, ' -RT:1024:0:',num2str(TVd)];
     end
-    image_reg = bart(picscommand,kspace_pics,sensitivities);
+    image_reg = bart(app,picscommand,kspace_pics,sensitivities);
     
     % Absolute value
     image_reg = abs(image_reg);

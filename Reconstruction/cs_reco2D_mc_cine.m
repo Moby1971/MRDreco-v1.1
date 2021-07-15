@@ -19,7 +19,7 @@ dimte = size(kspace_in{1},6);
 
 % resize k-space to next power of 2
 for i = 1:ncoils 
-    kspace_in{i} = bart(['resize -c 0 ',num2str(dimx),' 1 ',num2str(dimy),' 2 ',num2str(dimz),' 3 ',num2str(dimd)],kspace_in{i});
+    kspace_in{i} = bart(app,['resize -c 0 ',num2str(dimx),' 1 ',num2str(dimy),' 2 ',num2str(dimz),' 3 ',num2str(dimd)],kspace_in{i});
 end
 
 
@@ -63,13 +63,13 @@ if ncoils>1 && autosense==1
     
     % Calculate coil sensitivity maps with ecalib bart function
     kspace_pics_sum = sum(kspace_pics,[11,12]);
-    sensitivities = bart('ecalib -S -I -a', kspace_pics_sum);      % ecalib with softsense
+    sensitivities = bart(app,'ecalib -S -I -a', kspace_pics_sum);      % ecalib with softsense
     
     picscommand = ['pics -S -RL:6:7:',num2str(LR),' -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];
-    image_reg = bart(picscommand,kspace_pics,sensitivities);
+    image_reg = bart(app,picscommand,kspace_pics,sensitivities);
     
     % Sum of squares reconstruction
-    image_reg = bart('rss 16', image_reg);
+    image_reg = bart(app,'rss 16', image_reg);
     image_reg = abs(image_reg);
  
 end
@@ -85,7 +85,7 @@ if ncoils==1 || autosense==0
     
     % regular reconstruction
     picscommand = ['pics -S -RL:6:7:',num2str(LR),' -RW:6:0:',num2str(Wavelet),' -RT:6:0:',num2str(TVxy),' -RT:1056:0:',num2str(TVd)];
-    image_reg = bart(picscommand,kspace_pics,sensitivities);
+    image_reg = bart(app,picscommand,kspace_pics,sensitivities);
     
     % Take absolute values
     image_reg = abs(image_reg);
